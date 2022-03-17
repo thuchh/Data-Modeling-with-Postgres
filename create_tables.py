@@ -1,5 +1,5 @@
 import psycopg2
-from sql_queries import create_table_queries, drop_table_queries
+from sql_queries import create_table_queries, drop_table_queries, foreign_key_queries
 
 
 def create_database():
@@ -48,6 +48,15 @@ def create_tables(cur, conn):
         cur.execute(query)
         # conn.commit()
 
+        
+def add_foreign_key(cur, conn):
+    """
+    Creates foreign keys using the queries in `foreign_key_queries` list. 
+    """
+    conn.set_session(autocommit=True)
+    for query in foreign_key_queries:
+        cur.execute(query)
+
 
 def main():
     """
@@ -63,6 +72,7 @@ def main():
     
     drop_tables(cur, conn)
     create_tables(cur, conn)
+    # add_foreign_key(cur, conn)
 
     conn.close()
 
