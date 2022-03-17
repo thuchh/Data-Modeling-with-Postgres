@@ -1,10 +1,10 @@
 # DROP TABLES
 
-song_table_drop = "DROP TABLE IF EXISTS songs_table"
-artist_table_drop = "DROP TABLE IF EXISTS artists_table"
-time_table_drop = "DROP TABLE IF EXISTS time_table"
-user_table_drop = "DROP TABLE IF EXISTS users_table"
-songplay_table_drop = "DROP TABLE IF EXISTS songplays_table"
+song_table_drop = "DROP TABLE IF EXISTS songs_table;"
+artist_table_drop = "DROP TABLE IF EXISTS artists_table;"
+time_table_drop = "DROP TABLE IF EXISTS time_table;"
+user_table_drop = "DROP TABLE IF EXISTS users_table;"
+songplay_table_drop = "DROP TABLE IF EXISTS songplays_table;"
 
 
 
@@ -18,7 +18,7 @@ song_table_create = (
     title varchar NOT NULL,
     artist_id varchar NOT NULL,
     year int NOT NULL,
-    duration numeric NOT NULL)
+    duration numeric NOT NULL);
     """
 )
 
@@ -29,7 +29,7 @@ artist_table_create = (
     artist_name varchar NOT NULL,
     artist_location varchar NOT NULL,
     artist_latitude float,
-    artist_longitude float)
+    artist_longitude float);
     """
 )
 
@@ -42,7 +42,7 @@ time_table_create = (
     week int NOT NULL,
     month int NOT NULL,
     year int NOT NULL,
-    weekday int NOT NULL)
+    weekday int NOT NULL);
     """
 )
 
@@ -53,7 +53,7 @@ user_table_create = (
     first_name varchar NOT NULL,
     last_name varchar NOT NULL,
     gender char(1) NOT NULL,
-    level varchar NOT NULL)
+    level varchar NOT NULL);
     """
 )
 
@@ -68,7 +68,51 @@ songplay_table_create = (
     artist_id varchar,
     session_id int NOT NULL,
     location varchar NOT NULL,
-    user_agent varchar NOT NULL)
+    user_agent varchar NOT NULL);
+    """
+)
+
+#     """
+#     CREATE TABLE songplays_table (
+#     songplay_id serial PRIMARY KEY,
+#     start_time timestamp NOT NULL REFERENCES time_table (start_time),
+#     user_id int NOT NULL REFERENCES users_table (user_id),
+#     level varchar NOT NULL,
+#     song_id varchar REFERENCES songs_table (song_id),
+#     artist_id varchar REFERENCES artists_table (artist_id),
+#     session_id int NOT NULL,
+#     location varchar NOT NULL,
+#     user_agent varchar NOT NULL)
+#     """
+
+
+# CREATE FOREIGN KEYS
+fk1 = (
+    """
+    ALTER TABLE songplays_table
+    ADD CONSTRAINT fk_songplays_time FOREIGN KEY (start_time)
+    REFERENCES time_table (start_time);
+    """
+)
+fk2 = (
+    """
+    ALTER TABLE songplays_table
+    ADD CONSTRAINT fk_songplays_users FOREIGN KEY (user_id) 
+    REFERENCES users_table (user_id);
+    """
+)
+fk3 = (
+    """
+    ALTER TABLE songplays_table
+    ADD CONSTRAINT fk_songplays_songs FOREIGN KEY (song_id)
+    REFERENCES songs_table (song_id);
+    """
+)
+fk4 = (
+    """
+    ALTER TABLE songplays_table
+    ADD CONSTRAINT fk_songplays_artists FOREIGN KEY (artist_id)
+    REFERENCES artists_table (artist_id);
     """
 )
 
@@ -80,7 +124,7 @@ song_table_insert = (
     """
     INSERT INTO songs_table (song_id, title, artist_id, year, duration) 
     VALUES(%s, %s, %s, %s, %s) 
-    ON CONFLICT DO NOTHING
+    ON CONFLICT DO NOTHING;
     """
 )
 
@@ -88,24 +132,23 @@ artist_table_insert = (
     """
     INSERT INTO artists_table (artist_id, artist_name, artist_location, artist_latitude, artist_longitude)
     VALUES(%s, %s, %s, %s, %s)
-    ON CONFLICT DO NOTHING
+    ON CONFLICT DO NOTHING;
     """
 )
 
 time_table_insert = (
     """INSERT INTO time_table (start_time, hour, day, week, month, year, weekday)
     VALUES(%s, %s, %s, %s, %s, %s, %s)
-    ON CONFLICT DO NOTHING
+    ON CONFLICT DO NOTHING;
     """
 )
 
 user_table_insert = (
     """INSERT INTO users_table (user_id, first_name, last_name, gender, level)
-    VALUES(%s, %s, %s, %s, %s) \
-    ON CONFLICT (user_id) DO NOTHING
+    VALUES(%s, %s, %s, %s, %s)
+    ON CONFLICT (user_id) DO UPDATE SET level=EXCLUDED.level;
     """
 )
-# ON CONFLICT (user_id) DO UPDATE SET level = EXCLUDED.level
 
 songplay_table_insert = (
     """
@@ -114,7 +157,7 @@ songplay_table_insert = (
         artist_id, session_id, location, user_agent
         )
     VALUES(%s, %s, %s, %s, %s, %s, %s, %s) 
-    ON CONFLICT DO NOTHING
+    ON CONFLICT DO NOTHING;
     """
 )
 
@@ -127,7 +170,7 @@ song_select = (
     SELECT st.song_id, at.artist_id FROM songs_table AS st
     JOIN artists_table AS at
     ON st.artist_id = at.artist_id
-    WHERE st.title = %s AND at.artist_name = %s AND st.duration = %s
+    WHERE st.title = %s AND at.artist_name = %s AND st.duration = %s;
     """
 )
 
@@ -137,3 +180,4 @@ song_select = (
 
 create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
+foreign_key_queries = [fk1, fk2, fk3, fk4]
