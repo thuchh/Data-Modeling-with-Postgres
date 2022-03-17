@@ -23,11 +23,9 @@ Open terminal window on Jupyter Notebook and run commands:
 
 ## Database Schema
 
-I created a Star schema (from `diagram_generator.py`) which include one Fact table (songplays_table) and 4 Dimension tables.
+Data Schema is a Star schema database which include one Fact table (songplays_table) and 4 Dimension tables.
 
 <img src="sparkifydb_erd.png" alt="ERD Diagram" width="800"/>
-
-This design will offer flexibility with the queries being used for analysis.
 
 
 ## Project Dataset
